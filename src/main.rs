@@ -1,3 +1,5 @@
+mod kernels;
+
 #[cfg(test)]
 mod tests {
     #[test]
@@ -7,26 +9,13 @@ mod tests {
     }
 }
 
+use crate::kernels::{Wpoly6,dWspiky,d2Wvisc};
+
 #[derive(Copy,Clone)]
 struct Part {
     r: (f64,f64),
     v: (f64,f64),
     m: f64
-}
-
-fn Wpoly6(r: f64) -> f64 {
-    let h = 0.0000083189f64;
-    r*h
-}
-
-fn dWspiky(r: f64) -> f64 {
-    let h = 0.0000083189f64;
-    r*h
-}
-
-fn d2Wvisc(r: f64) -> f64 {
-    let h = 0.0000083189f64;
-    r*h
 }
 
 fn dis(i: &(f64,f64), j: &(f64,f64)) -> f64 {
