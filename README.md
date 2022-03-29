@@ -1,1 +1,1 @@
-# sph_webgpu
+# state equation sph
