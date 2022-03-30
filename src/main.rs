@@ -2,7 +2,7 @@ mod kernels;
 mod particle;
 
 use rayon::prelude::*;
-use crate::particle::*;
+use crate::particle::{Part, Ptype};
 
 fn get_case(vpart: &mut Vec<Part>) {
     let n: usize = 1007;
