@@ -1,6 +1,6 @@
 // Kernels
 
-const h : f64 = 0.0000083189f64;
+pub const h : f64 = 0.0000083189f64;
 const h2: f64 = h*h;
 const h3: f64 = h*h*h;
 const pi: f64 = 3.1415926536f64;
