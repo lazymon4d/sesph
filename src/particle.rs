@@ -5,11 +5,11 @@ use crate::kernels::{
     h
 };
 
-pub const d0: f64 = 1000.0f64;
-pub const mass: f64 = (8.0f64/27.0f64) * d0 * h * h * h;
-pub const kd: f64 = 0.7321f64;    // correct the value of state equation constant later
-pub const cf: f64 = 0.7320f64;    // correct the value of coefficient of viscosity later
-pub const ag: (f64,f64) = (0.0f64,-9.8130f64);    // acceleration due to gravity, balance si units everywhere else
+const d0: f64 = 1000.0f64;
+const mass: f64 = (8.0f64/27.0f64) * d0 * h * h * h;
+const kd: f64 = 0.7321f64;    // correct the value of state equation constant later
+const cf: f64 = 0.7320f64;    // correct the value of coefficient of viscosity later
+const ag: (f64,f64) = (0.0f64,-9.8130f64);    // acceleration due to gravity, balance si units everywhere else
 
 fn dis(r1: &(f64,f64), r2: &(f64,f64)) -> f64 {
     let arg = (r1.0-r2.0)*(r1.0-r2.0) + (r1.1-r2.1)*(r1.1-r2.1);
