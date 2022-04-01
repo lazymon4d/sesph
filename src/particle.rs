@@ -5,11 +5,22 @@ use crate::kernels::{
     h
 };
 
+// constants
 const d0: f64 = 1000.0f64;
 const mass: f64 = (8.0f64/27.0f64) * d0 * h * h * h;
 const kd: f64 = 0.7321f64;    // correct the value of state equation constant later
 const cf: f64 = 0.7320f64;    // correct the value of coefficient of viscosity later
 const ag: (f64,f64) = (0.0f64,-9.8130f64);    // acceleration due to gravity, balance si units everywhere else
+
+// boundaries, change them later
+const domain_up: f64 = (1000000.0f64 * h);
+const domain_dn: f64 = -domain_up;
+const domain_lf: f64 = -domain_up;
+const domain_rt: f64 = domain_up;
+
+// boundary deflection constants : Epsilon, velocity dampener
+const eps: f64 = h;
+const dmp: f64 = -0.5f64;
 
 fn dis(r1: &(f64,f64), r2: &(f64,f64)) -> f64 {
     let arg = (r1.0-r2.0)*(r1.0-r2.0) + (r1.1-r2.1)*(r1.1-r2.1);
@@ -123,5 +134,23 @@ impl Part {
         // position integration
         self.r.0 = self.r.0 + self.v.0 * (*step);
         self.r.1 = self.r.1 + self.v.1 * (*step); 
+
+        // boundary interaction
+        if self.r.0 - eps < domain_lf {
+            self.v.0 = self.v.0 * dmp;
+            self.r.0 = eps;
+        }
+        if self.r.0 + eps > domain_rt {
+            self.v.0 = self.v.0 * dmp;
+            self.r.0 = domain_rt - eps;
+        }
+        if self.r.1 - eps < domain_dn {
+            self.v.1 = self.v.1 * dmp;
+            self.r.1 = eps;
+        }
+        if self.r.1 - eps > domain_up {
+            self.v.1 = self.v.1 * dmp;
+            self.r.1 = domain_up - eps;
+        }
     }
 }

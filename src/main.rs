@@ -1,11 +1,14 @@
+#![allow(dead_code,unused_variables)]
+#![allow(non_upper_case_globals,non_snake_case)]
 mod kernels;
 mod particle;
 
+use std::time::{SystemTime};
 use rayon::prelude::*;
 use crate::particle::{Part, Ptype};
 
 fn get_case(vpart: &mut Vec<Part>) {
-    let n: usize = 1007;
+    let n: usize = 500;
     let rk: f64 = 170000f64;
     let vk: f64 = 110000f64;
     let mk: f64 = 200000f64;
@@ -48,9 +51,11 @@ fn sph(vpart: &mut Vec<Part>, timesteps: &Vec<f64>) {
 }
 
 fn main() {
-    let timesteps: Vec<f64> = vec![0.1;100];
+    let now = SystemTime::now();
+    let timesteps: Vec<f64> = vec![0.1;300];
     let mut vpart: Vec<Part> = Vec::<Part>::new(); 
     get_case(&mut vpart);
     sph(&mut vpart, &timesteps);
     println!("done!!");
+    println!("{}",now.elapsed().unwrap().as_secs());
 }
