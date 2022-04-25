@@ -1,9 +1,7 @@
 [package]
-name = "sph4"
+name = "mueller-sph-rs"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 glium = "0.31"
@@ -19,5 +17,16 @@ env_logger = "0.9"
 [dev-dependencies]
 criterion = "0.3"
 
+[[bench]]
+name = "benchmark"
+harness = false
+
 [build]
 rustflags = ["-C", "target-cpu=native"]
+
+[profile.release]
+lto = "fat"
+panic = "abort"
+codegen-units = 1
+debug = 0
+strip = true

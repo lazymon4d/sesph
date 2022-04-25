@@ -52,7 +52,8 @@ impl Grid {
 				set.insert(idx);
 			},
 			None => {
-				let mut set = self.zaccess.insert(z,HashSet::<usize>::new()).unwrap();
+				self.zaccess.insert(z,HashSet::<usize>::new());
+				let mut set = self.zaccess.get_mut(&z).unwrap();
 				set.insert(idx);
 			},
 		}
