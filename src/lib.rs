@@ -24,13 +24,11 @@ pub struct State<const M: usize> {
 }
 
 impl<const M: usize> State<M> {
-    #[must_use]
     pub fn new() -> Self {
         State {
             ..Default::default()
         }
     }
-
     pub fn mix_inflow(&mut self) {
         let pi = &mut self.i;
         let pf = &mut self.f;
@@ -48,7 +46,6 @@ impl<const M: usize> State<M> {
             }
         }
     }
-
     pub fn init_fluids(&mut self, dam_max_particles: usize) {
         let particles = &mut self.i;
         let mut y = EPS;
@@ -68,11 +65,10 @@ impl<const M: usize> State<M> {
         self.f.clone_from(particles);
         info!("Initialized dam break with {} particles", particles.len());
     }
-
     pub fn init_block(&mut self, max_block_particles: usize) {
+        
         todo!();
     }
-
     pub fn integrate(&mut self, d: &mut f32) {
         self.f.par_iter_mut().for_each(|p| {
             p.v += DT * p.a;
@@ -99,7 +95,6 @@ impl<const M: usize> State<M> {
             p.x = pos / 1000.0;
         });
     }
-
     pub fn compute_density_pressure(&mut self) {
         let si = &self.i;
         let sf = &mut self.f;
@@ -120,7 +115,6 @@ impl<const M: usize> State<M> {
             sf[i].p = GAS_CONST * ((si[i].d / d0).powf(7.0) - 1.0);
         }
     }
-
     pub fn compute_concentration_viscosity(&mut self) {
         let si = &self.i;
         let sf = &mut self.f;
@@ -143,7 +137,6 @@ impl<const M: usize> State<M> {
             sf[i].u = VISC * (1.0 - MXCI * N / (D * CONC)).powf(- 2.5 * CONC);
         }
     }
-
     pub fn compute_accl(&mut self) {
         let si = &self.i;
         let sf = &mut self.f;
@@ -164,14 +157,12 @@ impl<const M: usize> State<M> {
             sf[i].a = accl;
         }
     }
-
     pub fn update_z(&mut self) {
         let L = self.i.len();
         for i in 0usize..L {
             self.g.update_access(i,self.i[i].z,self.i[i].get_cell());
         }
     }
-
     pub fn update(&mut self, d: &mut f32) {
         self.mix_inflow();
         self.update_z();
