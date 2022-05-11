@@ -1,4 +1,5 @@
 use glam::Vec2;
+use glam::Vec4;
 use crate::utils::*;
 
 #[derive(Debug, Clone, Copy, Default)]
@@ -13,6 +14,7 @@ pub struct Particle {
     pub p: f32,
     pub c: f32,
     pub u: f32,
+    pub clr: Vec4, 
 }
 
 impl Particle {
@@ -36,6 +38,11 @@ impl Particle {
     #[must_use]
     pub fn position(&self) -> Vec2 {
         self.x * 1000.0
+    }
+
+    #[must_use]
+    pub fn color(&self) -> Vec4 {
+        self.clr
     }
 
     pub fn get_cell(&self) -> (i32,i32) {

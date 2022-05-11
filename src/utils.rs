@@ -12,7 +12,7 @@ pub const EPS: f32 = H;
 pub const BOUND_DAMPING: f32 = -0.5;
 pub const CONC: f32 = 0.7;
 pub const MXCI: f32 = 0.0896;
-pub const CAP: usize = 50000;
+pub const CAP: usize = 5000;
 pub const DT: f32 = 0.07;
 
 pub const WINDOW_WIDTH: u32 = 600;

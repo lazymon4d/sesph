@@ -4,17 +4,20 @@ mod utils;
 mod particle;
 
 use crate::grid::*;
-use crate::utils::*;
 use crate::kernel::*;
 use crate::particle::*;
+pub use crate::utils::*;
 
 use arrayvec::ArrayVec;
 use glam::Vec2;
+use glam::Vec4;
 use log::info;
 use rand::random;
 use rayon::prelude::*;
 
 pub const DT: f32 = 0.0007;
+pub const C1: Vec4 = glam::const_vec4!([0.149,0.141,0.912,1.000]);
+pub const C2: Vec4 = glam::const_vec4!([1.000,0.833,0.224,1.000]);
 
 #[derive(Debug, Default)]
 pub struct State<const M: usize> {
@@ -41,6 +44,7 @@ impl<const M: usize> State<M> {
             for j in 595..606 {
                 let jitter = random::<f32>();
                 let mut part = Particle::new(i as f32 + jitter, j as f32, 1);
+                part.clr = C2;
                 part.assign_v(Vec2::new(0f32,-1.33f32));
                 pi.push(part);pf.push(part);
             }
@@ -54,9 +58,11 @@ impl<const M: usize> State<M> {
             let mut x = EPS;
             while x <= VIEW_WIDTH - EPS * 2.0 {
                 x += H;
-                if particles.len() < 10000usize {
+                if particles.len() < 2000usize {
                     let jitter = random::<f32>();
-                    particles.push(Particle::new(x + jitter, y, 0));
+                    let mut part = Particle::new(x + jitter, y, 0);
+                    part.clr = C1;
+                    particles.push(part);
                 } else {
                     break 'outer;
                 }
@@ -69,7 +75,7 @@ impl<const M: usize> State<M> {
         
         todo!();
     }
-    pub fn integrate(&mut self, d: &mut f32) {
+    pub fn integrate(&mut self) {
         self.f.par_iter_mut().for_each(|p| {
             p.v += DT * p.a;
             p.x += DT * p.v;
@@ -145,14 +151,14 @@ impl<const M: usize> State<M> {
         assert_eq!(L,sf.len());
 
         for i in 0usize..L {
-            let mut accl = Vec2::ZERO;
+            let mut accl = G;
             for j in self.g.get_nbrs(si[i].get_cell()) {
                 if i == j {
                     continue;
                 }                
                 let rij = si[i].x-si[j].x;
-                accl += - si[j].m * (si[j].p/si[j].d.powi(2) + si[i].p/si[i].d.powi(2)) * dW(rij);
-                accl += si[j].m * 4.0 * si[i].u * si[j].u * rij.dot(dW(rij)) * (si[i].v-si[j].v) / (si[j].d * si[i].d * (si[i].u + si[j].u) * rij.length_squared());
+                // accl += - si[j].m * (si[j].p/si[j].d.powi(2) + si[i].p/si[i].d.powi(2)) * dW(rij);
+                // accl += si[j].m * 4.0 * si[i].u * si[j].u * rij.dot(dW(rij)) * (si[i].v-si[j].v) / (si[j].d * si[i].d * (si[i].u + si[j].u) * rij.length_squared());
             }
             sf[i].a = accl;
         }
@@ -163,13 +169,13 @@ impl<const M: usize> State<M> {
             self.g.update_access(i,self.i[i].z,self.i[i].get_cell());
         }
     }
-    pub fn update(&mut self, d: &mut f32) {
+    pub fn update(&mut self) {
         self.mix_inflow();
         self.update_z();
         self.compute_density_pressure();
         self.compute_concentration_viscosity();
         self.compute_accl();
-        self.integrate(d);
+        self.integrate();
         self.i.clone_from(&self.f);
     }
 }
